@@ -1,0 +1,31 @@
+.home-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 100vh;
+  max-width: 800px;
+  padding: 0 20px;
+  margin: 0 auto;
+
+  & & {
+    &__logo {
+      margin-top: -80px;
+    }
+
+    &__title {
+      font-weight: normal;
+    }
+
+    &__description {
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    &__links {
+      button {
+        margin: 0 8px;
+      }
+    }
+  }
+}

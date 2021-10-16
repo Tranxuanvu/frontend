@@ -1,0 +1,16 @@
+.login-container {
+  margin: 0 auto;
+  padding-top: 20vh;
+  max-width: 400px;
+
+  & & {
+    &__title {
+      font-weight: normal;
+    }
+
+    &__links {
+      display: flex;
+      flex-direction: column;
+    }
+  }
+}
