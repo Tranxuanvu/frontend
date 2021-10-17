@@ -8,6 +8,8 @@ const AppConfig = {
     TECHNOLOGIES: '/technologies',
   },
   API: {
+    PROJECTS: '/api/v1/projects',
+    DEVELOPERS: '/api/v1/developers',
     TECHNOLOGIES: '/api/v1/technologies',
   }
 };

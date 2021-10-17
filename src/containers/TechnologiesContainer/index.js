@@ -19,8 +19,6 @@ class TechnologiesContainer extends Component {
     formObject: null,
     formErrors: null,
     formVisible: false,
-    linksData: null,
-    linksVisible: false,
   };
 
   constructor(props) {

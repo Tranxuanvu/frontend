@@ -6,11 +6,13 @@ import {
   Input,
 } from 'antd';
 import ErrorAlert from '@/components/ErrorAlert';
+import DebounceSelect from '@/components/DebounceSelect';
 
 const validateMessages = {
   required: 'is required!',
 };
-class TechnologyForm extends PureComponent {
+
+class DeveloperForm extends PureComponent {
   formRef = React.createRef();
 
   handleOk = () => {
@@ -21,8 +23,13 @@ class TechnologyForm extends PureComponent {
       .then((values) => {
         const data = {
           id: formObject.id,
-          name: values.name,
+          developer: {
+            lastName: values.lastName,
+            firstName: values.firstName,
+            projectIds: values.projectIds,
+          }
         };
+        console.log('🚀 ~ file: DeveloperForm.js ~ line 32 ~ DeveloperForm ~ .then ~ data', data);
         onOk(data);
       })
       .catch((errorInfo) => {
@@ -40,11 +47,11 @@ class TechnologyForm extends PureComponent {
 
     switch (formType) {
       case 'create':
-        return 'Create Technology';
+        return 'Create Developer';
       case 'update':
-        return 'Update Technology';
+        return 'Update Developer';
       default:
-        return 'Technology';
+        return 'Developer';
     }
   };
 
@@ -56,11 +63,12 @@ class TechnologyForm extends PureComponent {
       maskClosable,
       destroyOnClose,
       confirmLoading,
+      optionsProject,
     } = this.props;
     const title = this.modalTitle();
 
     return (
-      <div className='technology-form-container'>
+      <div className='developer-form-container'>
         <Modal
           title={title}
           visible={visible}
@@ -73,19 +81,42 @@ class TechnologyForm extends PureComponent {
           <ErrorAlert errors={formErrors} />
           <Form
             colon={false}
-            hideRequiredMark
             layout='vertical'
             ref={this.formRef}
             initialValues={formObject}
             validateMessages={validateMessages}
           >
             <Form.Item
-              name='name'
-              label='Name'
+              name='firstName'
+              label='First Name'
               hasFeedback
               rules={[{ required: true }]}
             >
-              <Input placeholder='Name' />
+              <Input placeholder='First Name' />
+            </Form.Item>
+
+            <Form.Item
+              name='lastName'
+              label='Last Name'
+              hasFeedback
+              rules={[{ required: true }]}
+            >
+              <Input placeholder='Last Name' />
+            </Form.Item>
+
+            <Form.Item
+              multiple
+              label="Projects"
+              name="projectIds"
+              rules={[{ required: true }]}
+            >
+              <DebounceSelect
+                showSearch
+                mode="multiple"
+                style={{ width: '100%' }}
+                placeholder="Select Project"
+                optionInit={optionsProject}
+              />
             </Form.Item>
           </Form>
         </Modal>
@@ -94,7 +125,7 @@ class TechnologyForm extends PureComponent {
   }
 }
 
-TechnologyForm.propTypes = {
+DeveloperForm.propTypes = {
   onOk: PropTypes.func,
   visible: PropTypes.bool,
   onCancel: PropTypes.func,
@@ -104,6 +135,7 @@ TechnologyForm.propTypes = {
   formObject: PropTypes.object,
   confirmLoading: PropTypes.bool,
   destroyOnClose: PropTypes.bool,
+  optionsProject: PropTypes.func,
 };
 
-export default TechnologyForm;
+export default DeveloperForm;

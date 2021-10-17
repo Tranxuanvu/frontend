@@ -6,8 +6,6 @@ import { Form, Input, Button, Typography } from 'antd';
 
 import ErrorMessage from '@/components/ErrorAlert';
 import { login } from '@/actions/authActions';
-import { getErrors } from '@/selectors/errorSelectors';
-import { getAuthLoading, getCurrentUser } from '@/selectors/authSelectors';
 import './index.scss';
 
 const { Title } = Typography;

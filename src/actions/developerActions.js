@@ -1,18 +1,19 @@
 import api from '@/api';
 import camelcaseKeys from 'camelcase-keys';
+import snakecaseKeys from 'snakecase-keys';
 import { setErrors, clearErrors } from '@/actions/errorActions';
 import {
   setLoading,
-  technologiesFetched
-} from '@/store/technology';
+  developersFetched
+} from '@/store/developer';
 import AppConfig from '@/constants/AppConfig';
 
 
-export const fetchTechnologies = ({ page }) => async (dispatch) => {
+export const fetchDevelopers = ({ page }) => async (dispatch) => {
   dispatch(setLoading(true));
 
   return api
-    .get(AppConfig.API.TECHNOLOGIES, { params: { page } })
+    .get(AppConfig.API.DEVELOPERS, { params: { page } })
     .then(
       ({ data: response }) => {
         if (response.success) {
@@ -24,7 +25,7 @@ export const fetchTechnologies = ({ page }) => async (dispatch) => {
 
           dispatch(clearErrors('base'));
           dispatch(
-            technologiesFetched({
+            developersFetched({
               items,
               totalItems,
               page: currentPage,
@@ -43,18 +44,18 @@ export const fetchTechnologies = ({ page }) => async (dispatch) => {
     });
 };
 
-export const createTechnology = (data) => async (dispatch) => {
+export const createDeveloper = (data) => async (dispatch) => {
   dispatch(setLoading(true));
 
   return api
-    .post(`${AppConfig.API.TECHNOLOGIES}`, data)
+    .post(`${AppConfig.API.DEVELOPERS}`, snakecaseKeys(data))
     .then(() => {
-      dispatch(clearErrors('createTechnology'));
+      dispatch(clearErrors('createDeveloper'));
     })
     .catch((error) => {
       dispatch(setLoading(false));
       if (error.response) {
-        dispatch(setErrors('createTechnology', ['Submitted data is invalid']));
+        dispatch(setErrors('createDeveloper', ['Submitted data is invalid']));
       }
       throw error;
     })
@@ -63,18 +64,18 @@ export const createTechnology = (data) => async (dispatch) => {
     });
 };
 
-export const updateTechnology = (id, data) => async (dispatch) => {
+export const updateDeveloper = (id, data) => async (dispatch) => {
   dispatch(setLoading(true));
 
   return api
-    .put(`${AppConfig.API.TECHNOLOGIES}/${id}`, data)
+    .put(`${AppConfig.API.DEVELOPERS}/${id}`, snakecaseKeys(data))
     .then(() => {
-      dispatch(clearErrors('updateTechnology'));
+      dispatch(clearErrors('updateDeveloper'));
     })
     .catch((error) => {
       dispatch(setLoading(false));
       if (error.response) {
-        dispatch(setErrors('updateTechnology', ['Submitted data is invalid']));
+        dispatch(setErrors('updateDeveloper', ['Submitted data is invalid']));
       }
       throw error;
     })
@@ -83,20 +84,13 @@ export const updateTechnology = (id, data) => async (dispatch) => {
     });
 };
 
-export const deleteTechnology = (id) => async (dispatch) => {
+export const deleteDeveloper = (id) => async (dispatch) => {
   dispatch(setLoading(true));
 
   return api
-    .delete(`${AppConfig.API.TECHNOLOGIES}/${id}`)
-    .then(({ data: response }) => {
-
-      if (response.success) {
-        dispatch(clearErrors('base'));
-      } else {
-        dispatch(
-          setErrors('base', [response.message]),
-        );
-      }
+    .delete(`${AppConfig.API.DEVELOPERS}/${id}`)
+    .then(() => {
+      dispatch(clearErrors('base'));
     })
     .catch((error) => {
       dispatch(setLoading(false));
