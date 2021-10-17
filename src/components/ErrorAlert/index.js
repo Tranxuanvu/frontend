@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import PropTypes from 'prop-types';
 import { Alert } from 'antd';
 import './index.scss';
@@ -14,14 +14,14 @@ function ErrorAlert({ errors }) {
         description={
           <>
             {errors.map((error) => (
-              <>
+              <Fragment key={error}>
                 {error}
                 <br />
-              </>
+              </Fragment>
             ))}
           </>
         }
-        message="Error"
+        message="Messages"
         type="error"
         showIcon
       />

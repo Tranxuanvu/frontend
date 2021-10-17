@@ -2,10 +2,12 @@ import { configureStore, combineReducers } from '@reduxjs/toolkit';
 
 import error from './error';
 import auth from './auth';
+import technology from './technology';
 
 const reducer = combineReducers({
-  error,
   auth,
+  error,
+  technology,
 });
 
 const store = configureStore({

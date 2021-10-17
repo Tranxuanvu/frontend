@@ -1,6 +1,6 @@
 import api from '@/api';
 import camelcaseKeys from 'camelcase-keys';
-import { throwErrors } from '@/actions/errorActions';
+import { setErrors, clearErrors } from '@/actions/errorActions';
 import { loginRequest, loginSuccess, loginFail, loggedOut } from '@/store/auth';
 import {
   setUserToLocalStorage,
@@ -21,15 +21,16 @@ export const login = ({ email, password }) => async (dispatch) => {
       const { result: user } = camelcaseKeys(data, { deep: true });
 
       setUserToLocalStorage(user);
+      clearErrors('login');
       dispatch(loginSuccess({ user }));
     } else {
       dispatch(loginFail());
-      dispatch(throwErrors(['Something went wrong!']));
+      dispatch(setErrors('login', ['Email or password is invalid']));
     }
 
   } catch (error) {
     dispatch(loginFail());
-    dispatch(throwErrors(['Email or password is invalid']));
+    dispatch(setErrors('login', ['Email or password is invalid']));
     console.error(error);
   }
 };

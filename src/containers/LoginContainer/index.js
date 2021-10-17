@@ -81,11 +81,11 @@ LoginContainer.propTypes = {
   dispatchLogin: PropTypes.func,
 };
 
-const mapStateToProps = (state) => ({
-  errors: getErrors(state),
-  loading: getAuthLoading(state),
-  currentUser: getCurrentUser(state),
-});
+const mapStateToProps = ({ auth, error }) => ({
+    currentUser: auth.currentUser,
+    loading: auth.loading,
+    errors: error.login,
+  });
 
 export default connect(mapStateToProps, {
   dispatchLogin: login,

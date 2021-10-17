@@ -2,16 +2,23 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const slice = createSlice({
   name: 'error',
-  initialState: {
-    errors: [],
-  },
+  initialState: {},
   reducers: {
-    setErrors(state, { payload: { errors } }) {
-      state.errors = errors;
+    set(state, { payload: { scope, errors } }) {
+      state[scope] = errors;
+    },
+    clear(state, { payload: { scope } }) {
+      if (Array.isArray(scope)) {
+        scope.forEach((sp) => {
+          state[sp] = null;
+        });
+      } else {
+        state[scope] = null;
+      }
     },
   },
 });
 
-export const { setErrors } = slice.actions;
+export const { set, clear } = slice.actions;
 
 export default slice.reducer;

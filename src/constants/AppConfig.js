@@ -6,6 +6,9 @@ const AppConfig = {
     DASHBOARD: '/dashboard',
     DEVELOPERS: '/developers',
     TECHNOLOGIES: '/technologies',
+  },
+  API: {
+    TECHNOLOGIES: '/api/v1/technologies',
   }
 };
 

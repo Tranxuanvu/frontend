@@ -1,9 +1,9 @@
-import { setErrors } from '@/store/error';
+import { set, clear } from '@/store/error';
 
-export const throwErrors = (errors) => async (dispatch) => {
-  dispatch(setErrors({ errors }));
+export const setErrors = (scope, errors) => async (dispatch) => {
+  dispatch(set({ scope, errors }));
 };
 
-export const clearErrors = () => async (dispatch) => {
-  dispatch(setErrors({ errors: [] }));
+export const clearErrors = (scope) => async (dispatch) => {
+  dispatch(clear({ scope }));
 };
