@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { withRouter } from 'react-router-dom';
-
-import Routes from '@/routes';
+import {
+  withRouter,
+} from 'react-router-dom';
 import { clearErrors } from '@/actions/errorActions';
+import Routes from '@/routes';
 
 import '@/styles/index.scss';
 import './index.scss';

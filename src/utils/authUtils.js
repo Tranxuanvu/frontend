@@ -10,5 +10,5 @@ export const getUserFromLocalStorage = () =>
 export const getAuthTokenFromLocalStorage = () => {
   const user = getUserFromLocalStorage();
 
-  return user?.token;
+  return user?.authToken;
 };

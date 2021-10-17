@@ -1,4 +1,5 @@
-// import api from '@/api';
+import api from '@/api';
+import camelcaseKeys from 'camelcase-keys';
 import { throwErrors } from '@/actions/errorActions';
 import { loginRequest, loginSuccess, loginFail, loggedOut } from '@/store/auth';
 import {
@@ -6,25 +7,26 @@ import {
   removeUserFromLocalStorage,
 } from '@/utils/authUtils';
 
-const fakeUser = {
-  name: 'Peter',
-  email: 'me@example.com',
-  password: 'password123',
-  token: 'secretUserAuthToken',
-};
-
 export const login = ({ email, password }) => async (dispatch) => {
   dispatch(loginRequest());
 
   try {
-    // Simulate login request
-    await new Promise(resolve => setTimeout(resolve, 500));
-    if (email === fakeUser.email && password === fakeUser.password) {
-      setUserToLocalStorage(fakeUser);
-      dispatch(loginSuccess({ user: fakeUser }));
+    const { data } = await api.post('api/v1/auths/sign_in', {
+      email, password,
+    });
+
+    const { success } = data;
+
+    if (success) {
+      const { result: user } = camelcaseKeys(data, { deep: true });
+
+      setUserToLocalStorage(user);
+      dispatch(loginSuccess({ user }));
     } else {
-      throw new Error();
+      dispatch(loginFail());
+      dispatch(throwErrors(['Something went wrong!']));
     }
+
   } catch (error) {
     dispatch(loginFail());
     dispatch(throwErrors(['Email or password is invalid']));

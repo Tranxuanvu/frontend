@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { Form, Input, Button, Typography } from 'antd';
 
 import ErrorMessage from '@/components/ErrorAlert';
@@ -69,9 +69,6 @@ class LoginContainer extends Component {
             </Button>
           </Form.Item>
         </Form>
-        <div className="login-container__links">
-          <Link to="/">Back to home</Link>
-        </div>
       </div>
     );
   }
