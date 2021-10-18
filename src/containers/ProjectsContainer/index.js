@@ -16,7 +16,7 @@ import {
 import {
   fetchDevelopers
 } from '@/actions/developerActions';
-import ErrorAlert from '@/components/ErrorAlert';
+import { clearAllErrors } from '@/actions/errorActions';
 import TechnologiesList from './components/List';
 import ProjectForm from './ProjectForm';
 
@@ -73,8 +73,21 @@ class ProjectsContainer extends Component {
   }
 
   handleRefreshTechnologies() {
-    const { fetchProjects } = this.props;
-    fetchProjects({ page: 1 });
+    const {
+      baseErrors,
+      createErrors,
+      updateErrors,
+      fetchProjects,
+    } = this.props;
+
+    const hasError =
+      (!!baseErrors && baseErrors.length > 0) ||
+      (!!createErrors && createErrors.length > 0) ||
+      (!!updateErrors && updateErrors.length > 0);
+
+    if (!hasError) {
+      fetchProjects({ page: 1 });
+    }
   }
 
   handleOkForm = ({ id, ...submittedData }) => {
@@ -150,11 +163,15 @@ class ProjectsContainer extends Component {
     });
   };
 
+  handleClearErrors = () => {
+    const { clearAllErrors } = this.props;
+    clearAllErrors();
+  }
+
   render() {
     const {
       items,
       loading,
-      baseErrors,
     } = this.props;
 
     const {
@@ -168,7 +185,6 @@ class ProjectsContainer extends Component {
 
     return (
       <div className="projects-container">
-        <ErrorAlert errors={baseErrors} />
         <HeaderSection
           title="Projects"
           extra={[
@@ -201,6 +217,7 @@ class ProjectsContainer extends Component {
           onCancel={this.handleCancleForm}
           optionsTechnology={optionsTechnology}
           optionsDeveloper={optionsDeveloper}
+          handleClearErrors={this.handleClearErrors}
         />
       </div>
     );
@@ -215,8 +232,9 @@ ProjectsContainer.propTypes = {
   createProject: PropTypes.func,
   deleteProject: PropTypes.func,
   fetchProjects: PropTypes.func,
-  developerItems: PropTypes.func,
+  clearAllErrors: PropTypes.func,
   fetchDevelopers: PropTypes.func,
+  developerItems: PropTypes.array,
   technologyItems: PropTypes.array,
   fetchTechnologies: PropTypes.func,
   baseErrors: PropTypes.arrayOf(PropTypes.string),
@@ -241,6 +259,7 @@ export default connect(mapStateToProps, {
   createProject,
   deleteProject,
   fetchProjects,
+  clearAllErrors,
   fetchDevelopers,
   fetchTechnologies,
 })(ProjectsContainer);

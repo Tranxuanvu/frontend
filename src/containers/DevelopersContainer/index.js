@@ -12,7 +12,6 @@ import {
 import {
   fetchProjects
 } from '@/actions/projectActions';
-import ErrorAlert from '@/components/ErrorAlert';
 import DevelopersList from './components/List';
 import DeveloperForm from './DeveloperForm';
 
@@ -59,8 +58,21 @@ class DevelopersContainer extends Component {
   }
 
   handleRefreshDevelopers() {
-    const { fetchDevelopers } = this.props;
-    fetchDevelopers({ page: 1 });
+    const {
+      baseErrors,
+      createErrors,
+      updateErrors,
+      fetchDevelopers,
+    } = this.props;
+
+    const hasError =
+      (!!baseErrors && baseErrors.length > 0) ||
+      (!!createErrors && createErrors.length > 0) ||
+      (!!updateErrors && updateErrors.length > 0);
+
+    if (!hasError) {
+      fetchDevelopers({ page: 1 });
+    }
   }
 
   handleOkForm = ({ id, ...submittedData }) => {
@@ -137,7 +149,6 @@ class DevelopersContainer extends Component {
 
     return (
       <div className="devlopers-container">
-        <ErrorAlert errors={baseErrors} />
         <HeaderSection
           title="Developers"
           extra={[

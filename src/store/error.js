@@ -16,9 +16,10 @@ const slice = createSlice({
         state[scope] = null;
       }
     },
+    reset: state => ({}),
   },
 });
 
-export const { set, clear } = slice.actions;
+export const { set, clear, reset } = slice.actions;
 
 export default slice.reducer;

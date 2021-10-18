@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import {
   withRouter,
 } from 'react-router-dom';
-import { clearErrors } from '@/actions/errorActions';
+import { clearAllErrors } from '@/actions/errorActions';
 import Routes from '@/routes';
 
 import '@/styles/index.scss';
@@ -12,10 +12,10 @@ import './index.scss';
 
 class AppContainer extends Component {
   componentDidMount() {
-    const { history, dispatchClearErrors } = this.props;
+    const { history, dispatchclearAllErrors } = this.props;
 
     this.unlistenHistory = history.listen(() => {
-      dispatchClearErrors();
+      dispatchclearAllErrors();
     });
   }
 
@@ -34,11 +34,11 @@ class AppContainer extends Component {
 
 AppContainer.propTypes = {
   history: PropTypes.object,
-  dispatchClearErrors: PropTypes.func,
+  dispatchclearAllErrors: PropTypes.func,
 };
 
 export default withRouter(
   connect(null, {
-    dispatchClearErrors: clearErrors,
+    dispatchclearAllErrors: clearAllErrors,
   })(AppContainer),
 );

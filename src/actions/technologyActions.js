@@ -1,6 +1,7 @@
 import api from '@/api';
 import camelcaseKeys from 'camelcase-keys';
-import { setErrors, clearErrors } from '@/actions/errorActions';
+import { setErrors } from '@/actions/errorActions';
+import { setSuccessMessages } from '@/actions/successActions';
 import {
   setLoading,
   technologiesFetched
@@ -22,7 +23,6 @@ export const fetchTechnologies = ({ page }) => async (dispatch) => {
           } = camelcaseKeys(response, { deep: true });
           const items = data.map(item => ({ id: item.id, ...item.attributes }));
 
-          dispatch(clearErrors('base'));
           dispatch(
             technologiesFetched({
               items,
@@ -48,8 +48,14 @@ export const createTechnology = (data) => async (dispatch) => {
 
   return api
     .post(`${AppConfig.API.TECHNOLOGIES}`, data)
-    .then(() => {
-      dispatch(clearErrors('createTechnology'));
+    .then(({ data: response }) => {
+      const { success, message } = response;
+
+      if (success) {
+        dispatch(setSuccessMessages([message]));
+      } else {
+        dispatch(setErrors('createTechnology', [message]));
+      }
     })
     .catch((error) => {
       dispatch(setLoading(false));
@@ -63,51 +69,48 @@ export const createTechnology = (data) => async (dispatch) => {
     });
 };
 
-export const updateTechnology = (id, data) => async (dispatch) => {
-  dispatch(setLoading(true));
+export const updateTechnology = (id, data) => async (dispatch) => api
+  .put(`${AppConfig.API.TECHNOLOGIES}/${id}`, data)
+  .then(({ data: response }) => {
+    const { success, message } = response;
 
-  return api
-    .put(`${AppConfig.API.TECHNOLOGIES}/${id}`, data)
-    .then(() => {
-      dispatch(clearErrors('updateTechnology'));
-    })
-    .catch((error) => {
-      dispatch(setLoading(false));
-      if (error.response) {
-        dispatch(setErrors('updateTechnology', ['Submitted data is invalid']));
-      }
-      throw error;
-    })
-    .finally(() => {
-      dispatch(setLoading(false));
-    });
-};
+    if (success) {
+      dispatch(setSuccessMessages([message]));
+    } else {
+      dispatch(setErrors('updateTechnology', [message]));
+    }
+  })
+  .catch((error) => {
+    dispatch(setLoading(false));
+    if (error.response) {
+      dispatch(setErrors('updateTechnology', ['Submitted data is invalid']));
+    }
+    throw error;
+  })
+  .finally(() => {
+    dispatch(setLoading(false));
+  });
 
-export const deleteTechnology = (id) => async (dispatch) => {
-  dispatch(setLoading(true));
+export const deleteTechnology = (id) => async (dispatch) => api
+  .delete(`${AppConfig.API.TECHNOLOGIES}/${id}`)
+  .then(({ data: response }) => {
+    const { success, message } = response;
 
-  return api
-    .delete(`${AppConfig.API.TECHNOLOGIES}/${id}`)
-    .then(({ data: response }) => {
-
-      if (response.success) {
-        dispatch(clearErrors('base'));
-      } else {
-        dispatch(
-          setErrors('base', [response.message]),
-        );
-      }
-    })
-    .catch((error) => {
-      dispatch(setLoading(false));
-      if (error.response) {
-        dispatch(
-          setErrors('base', ['Deleting is unable to process']),
-        );
-      }
-      throw error;
-    })
-    .finally(() => {
-      dispatch(setLoading(false));
-    });
-};
+    if (success) {
+      dispatch(setSuccessMessages([message]));
+    } else {
+      dispatch(setErrors('base', [message]),);
+    }
+  })
+  .catch((error) => {
+    dispatch(setLoading(false));
+    if (error.response) {
+      dispatch(
+        setErrors('base', ['Deleting is unable to process']),
+      );
+    }
+    throw error;
+  })
+  .finally(() => {
+    dispatch(setLoading(false));
+  });

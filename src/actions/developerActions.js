@@ -1,7 +1,8 @@
 import api from '@/api';
 import camelcaseKeys from 'camelcase-keys';
 import snakecaseKeys from 'snakecase-keys';
-import { setErrors, clearErrors } from '@/actions/errorActions';
+import { setErrors } from '@/actions/errorActions';
+import { setSuccessMessages } from '@/actions/successActions';
 import {
   setLoading,
   developersFetched
@@ -23,7 +24,6 @@ export const fetchDevelopers = ({ page }) => async (dispatch) => {
           } = camelcaseKeys(response, { deep: true });
           const items = data.map(item => ({ id: item.id, ...item.attributes }));
 
-          dispatch(clearErrors('base'));
           dispatch(
             developersFetched({
               items,
@@ -49,8 +49,14 @@ export const createDeveloper = (data) => async (dispatch) => {
 
   return api
     .post(`${AppConfig.API.DEVELOPERS}`, snakecaseKeys(data))
-    .then(() => {
-      dispatch(clearErrors('createDeveloper'));
+    .then(({ data: response }) => {
+      const { success, message } = response;
+
+      if (success) {
+        dispatch(setSuccessMessages([message]));
+      } else {
+        dispatch(setErrors('createDeveloper', [message]));
+      }
     })
     .catch((error) => {
       dispatch(setLoading(false));
@@ -64,44 +70,48 @@ export const createDeveloper = (data) => async (dispatch) => {
     });
 };
 
-export const updateDeveloper = (id, data) => async (dispatch) => {
-  dispatch(setLoading(true));
+export const updateDeveloper = (id, data) => async (dispatch) => api
+  .put(`${AppConfig.API.DEVELOPERS}/${id}`, snakecaseKeys(data))
+  .then(({ data: response }) => {
+    const { success, message } = response;
 
-  return api
-    .put(`${AppConfig.API.DEVELOPERS}/${id}`, snakecaseKeys(data))
-    .then(() => {
-      dispatch(clearErrors('updateDeveloper'));
-    })
-    .catch((error) => {
-      dispatch(setLoading(false));
-      if (error.response) {
-        dispatch(setErrors('updateDeveloper', ['Submitted data is invalid']));
-      }
-      throw error;
-    })
-    .finally(() => {
-      dispatch(setLoading(false));
-    });
-};
+    if (success) {
+      dispatch(setSuccessMessages([message]));
+    } else {
+      dispatch(setErrors('updateDeveloper', [message]));
+    }
+  })
+  .catch((error) => {
+    dispatch(setLoading(false));
+    if (error.response) {
+      dispatch(setErrors('updateDeveloper', ['Submitted data is invalid']));
+    }
+    throw error;
+  })
+  .finally(() => {
+    dispatch(setLoading(false));
+  });
 
-export const deleteDeveloper = (id) => async (dispatch) => {
-  dispatch(setLoading(true));
+export const deleteDeveloper = (id) => async (dispatch) => api
+  .delete(`${AppConfig.API.DEVELOPERS}/${id}`)
+  .then(({ data: response }) => {
+    const { success, message } = response;
 
-  return api
-    .delete(`${AppConfig.API.DEVELOPERS}/${id}`)
-    .then(() => {
-      dispatch(clearErrors('base'));
-    })
-    .catch((error) => {
-      dispatch(setLoading(false));
-      if (error.response) {
-        dispatch(
-          setErrors('base', ['Deleting is unable to process']),
-        );
-      }
-      throw error;
-    })
-    .finally(() => {
-      dispatch(setLoading(false));
-    });
-};
+    if (success) {
+      dispatch(setSuccessMessages([message]));
+    } else {
+      dispatch(setErrors('base', [message]));
+    }
+  })
+  .catch((error) => {
+    dispatch(setLoading(false));
+    if (error.response) {
+      dispatch(
+        setErrors('base', ['Deleting is unable to process']),
+      );
+    }
+    throw error;
+  })
+  .finally(() => {
+    dispatch(setLoading(false));
+  });

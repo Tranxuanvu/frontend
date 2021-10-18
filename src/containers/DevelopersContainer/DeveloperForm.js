@@ -29,7 +29,7 @@ class DeveloperForm extends PureComponent {
             projectIds: values.projectIds,
           }
         };
-        console.log('🚀 ~ file: DeveloperForm.js ~ line 32 ~ DeveloperForm ~ .then ~ data', data);
+
         onOk(data);
       })
       .catch((errorInfo) => {
@@ -135,7 +135,7 @@ DeveloperForm.propTypes = {
   formObject: PropTypes.object,
   confirmLoading: PropTypes.bool,
   destroyOnClose: PropTypes.bool,
-  optionsProject: PropTypes.func,
+  optionsProject: PropTypes.array,
 };
 
 export default DeveloperForm;

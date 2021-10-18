@@ -2,6 +2,7 @@ import api from '@/api';
 import camelcaseKeys from 'camelcase-keys';
 import snakecaseKeys from 'snakecase-keys';
 import { setErrors, clearErrors } from '@/actions/errorActions';
+import { setSuccessMessages } from '@/actions/successActions';
 import {
   setLoading,
   projectsFetched
@@ -23,7 +24,6 @@ export const fetchProjects = ({ page }) => async (dispatch) => {
           } = camelcaseKeys(response, { deep: true });
           const items = data.map(item => ({ id: item.id, ...item.attributes }));
 
-          dispatch(clearErrors('base'));
           dispatch(
             projectsFetched({
               items,
@@ -45,13 +45,19 @@ export const fetchProjects = ({ page }) => async (dispatch) => {
 };
 
 export const createProject = (data) => async (dispatch) => {
-  console.log('🚀 ~ file: projectActions.js ~ line 48 ~ createProject ~ data', data);
   dispatch(setLoading(true));
 
   return api
     .post(`${AppConfig.API.PROJECTS}`, snakecaseKeys(data))
-    .then(() => {
-      dispatch(clearErrors('createProject'));
+    .then(({ data: response }) => {
+      const { success, message } = response;
+
+      if (success) {
+        dispatch(clearErrors('createProject'));
+        dispatch(setSuccessMessages([message]));
+      } else {
+        dispatch(setErrors('createProject', [message]));
+      }
     })
     .catch((error) => {
       dispatch(setLoading(false));
@@ -65,44 +71,49 @@ export const createProject = (data) => async (dispatch) => {
     });
 };
 
-export const updateProject = (id, data) => async (dispatch) => {
-  dispatch(setLoading(true));
+export const updateProject = (id, data) => async (dispatch) => api
+  .put(`${AppConfig.API.PROJECTS}/${id}`, snakecaseKeys(data))
+  .then(({ data: response }) => {
+    const { success, message } = response;
 
-  return api
-    .put(`${AppConfig.API.PROJECTS}/${id}`, snakecaseKeys(data))
-    .then(() => {
+    if (success) {
       dispatch(clearErrors('updateProject'));
-    })
-    .catch((error) => {
-      dispatch(setLoading(false));
-      if (error.response) {
-        dispatch(setErrors('updateProject', ['Submitted data is invalid']));
-      }
-      throw error;
-    })
-    .finally(() => {
-      dispatch(setLoading(false));
-    });
-};
+      dispatch(setSuccessMessages([message]));
+    } else {
+      dispatch(setErrors('updateProject', [message]));
+    }
+  })
+  .catch((error) => {
+    dispatch(setLoading(false));
+    if (error.response) {
+      dispatch(setErrors('updateProject', ['Submitted data is invalid']));
+    }
+    throw error;
+  })
+  .finally(() => {
+    dispatch(setLoading(false));
+  });
 
-export const deleteProject = (id) => async (dispatch) => {
-  dispatch(setLoading(true));
+export const deleteProject = (id) => async (dispatch) => api
+  .delete(`${AppConfig.API.PROJECTS}/${id}`)
+  .then(({ data: response }) => {
+    const { success, message } = response;
 
-  return api
-    .delete(`${AppConfig.API.PROJECTS}/${id}`)
-    .then(() => {
-      dispatch(clearErrors('base'));
-    })
-    .catch((error) => {
-      dispatch(setLoading(false));
-      if (error.response) {
-        dispatch(
-          setErrors('base', ['Deleting is unable to process']),
-        );
-      }
-      throw error;
-    })
-    .finally(() => {
-      dispatch(setLoading(false));
-    });
-};
+    if (success) {
+      dispatch(setSuccessMessages([message]));
+    } else {
+      dispatch(setErrors('base', [message]));
+    }
+  })
+  .catch((error) => {
+    dispatch(setLoading(false));
+    if (error.response) {
+      dispatch(
+        setErrors('base', ['Deleting is unable to process']),
+      );
+    }
+    throw error;
+  })
+  .finally(() => {
+    dispatch(setLoading(false));
+  });

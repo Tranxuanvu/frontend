@@ -9,7 +9,8 @@ import {
   deleteTechnology,
   fetchTechnologies,
 } from '@/actions/technologyActions';
-import ErrorAlert from '@/components/ErrorAlert';
+import { clearAllErrors } from '@/actions/errorActions';
+import { clearSuccessMessages } from '@/actions/successActions';
 import TechnologiesList from './components/List';
 import TechnologyForm from './TechnologyForm';
 
@@ -52,8 +53,21 @@ class TechnologiesContainer extends Component {
   }
 
   handleRefreshTechnologies() {
-    const { fetchTechnologies } = this.props;
-    fetchTechnologies({ page: 1 });
+    const {
+      baseErrors,
+      createErrors,
+      updateErrors,
+      fetchTechnologies,
+    } = this.props;
+
+    const hasError =
+      (!!baseErrors && baseErrors.length > 0) ||
+      (!!createErrors && createErrors.length > 0) ||
+      (!!updateErrors && updateErrors.length > 0);
+
+    if (!hasError) {
+      fetchTechnologies({ page: 1 });
+    }
   }
 
   handleOkForm = ({ id, ...submittedData }) => {
@@ -113,7 +127,6 @@ class TechnologiesContainer extends Component {
     const {
       items,
       loading,
-      baseErrors,
     } = this.props;
 
     const {
@@ -125,7 +138,6 @@ class TechnologiesContainer extends Component {
 
     return (
       <div className="technologies-container">
-        <ErrorAlert errors={baseErrors} />
         <HeaderSection
           title="Technologies"
           extra={[
@@ -175,19 +187,23 @@ TechnologiesContainer.propTypes = {
   updateErrors: PropTypes.arrayOf(PropTypes.string),
 };
 
-const mapStateToProps = ({ technology, error }) => ({
+const mapStateToProps = ({ technology, error, success }) => ({
+  saved: success.saved,
   page: technology.page,
   baseErrors: error.base,
   items: technology.items,
   loading: technology.loading,
+  successMessages: success.messages,
   totalItems: technology.totalItems,
   createErrors: error.createTechnology,
   updateErrors: error.updateTechnology,
 });
 
 export default connect(mapStateToProps, {
+  clearAllErrors,
   updateTechnology,
   createTechnology,
   deleteTechnology,
   fetchTechnologies,
+  clearSuccessMessages,
 })(TechnologiesContainer);

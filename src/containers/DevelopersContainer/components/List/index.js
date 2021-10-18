@@ -39,12 +39,12 @@ class DevelopersList extends Component {
             {
               title: 'First Name',
               dataIndex: 'firstName',
-              key: 'name',
+              key: 'firstName',
             },
             {
               title: 'Last Name',
               dataIndex: 'lastName',
-              key: 'name',
+              key: 'lastName',
             },
             {
               title: 'Projects',
